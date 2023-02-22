@@ -20,7 +20,7 @@ export const App = () => {
 	return (
 		<main>
 			<h1>App-tic-tac-toe</h1>
-			<section>
+			<section className="board">
 				{board.map((item,index) => (
 					<Square 
 						key={index}
@@ -31,6 +31,21 @@ export const App = () => {
 					
 					</Square>
 				))}
+			</section>
+			<h2>Turn</h2>
+			<section className="turn">
+				<Square
+					position={0}
+					isSelect={turn=== TURN.X ? true : false}
+				>
+					{TURN.X}
+				</Square>
+				<Square
+					position={0}
+					isSelect={turn=== TURN.O ? true : false}
+				>
+					{TURN.O}
+				</Square>
 			</section>
 		</main>
 	)	
