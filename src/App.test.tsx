@@ -12,7 +12,7 @@ describe("<App/>", () => {
 	})
 	test("Render of 9 square in board", () => {
 		const { getByRole } = render(<App />)
-		for (let i in board) {
+		for (const i in board) {
 			const square = getByRole(`square${i}`)
 			expect(square).toBeInTheDocument()
 		}
@@ -72,7 +72,7 @@ describe("<App/>", () => {
 		const { getByRole } = render(<App />)
 		const square5 = getByRole("square5")
 		fireEvent.click(square5)
-		const expectBoard = ["", "", "", "", "", "❌", "", "", ""]
+		const expectBoard = [null, null, null, null, null, "❌", null, null, null]
 		const expectTurn = "⭕"
 		// Assert that localStorage was called with the correct values
 		expect(localStorage.setItem).toHaveBeenCalledWith("board", `${JSON.stringify(expectBoard)}`)
@@ -114,13 +114,37 @@ describe("<App/>", () => {
 		})
 		expect(getByRole("square5").textContent).toBeFalsy()
 	})
-	test("If there is a winner, should display who winner of game", () => {
+	test("If there is a winner, should display who winner and button reset", () => {
 		const { getByRole } = render(<App />)
 		const positions = [2, 0, 4, 3, 6]
 		positions.forEach((position) => {
 			const square = getByRole(`square${position}`)
 			fireEvent.click(square)
 		})
-		expect(getByRole("winner").textContent).toEqual("There is a winner❌")
+		expect(getByRole("winner").textContent).toEqual("There is a winner❌Start again game")
+		expect(getByRole("button", { name: "Start again game" })).toBeInTheDocument()
+	})
+	test("If all board is fill, should display message tha there is tie and button reset", () => {
+		const { getByRole } = render(<App />)
+		const positions = [0, 8, 5, 4, 6, 3, 1, 2, 7]
+		positions.forEach((position) => {
+			const square = getByRole(`square${position}`)
+			fireEvent.click(square)
+		})
+		expect(getByRole("tie").textContent).toEqual("There is tieStart again game")
+		expect(getByRole("button", { name: "Start again game" })).toBeInTheDocument()
+	})
+	test("When clicked button reset all data board and turn should restart", () => {
+		const { getByRole } = render(<App />)
+		const sectionTurn = getByRole("turn")
+		const buttonReset = getByRole("button", { name: "Reset Game" })
+		const square0 = getByRole("square0")
+		fireEvent.click(square0)
+		fireEvent.click(buttonReset)
+		for (const i in board) {
+			const square = getByRole(`square${i}`)
+			expect(square.textContent).toBeFalsy()
+			expect(sectionTurn.textContent).toBe("❌")
+		}
 	})
 })
